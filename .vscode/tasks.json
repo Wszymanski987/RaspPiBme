@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/RaspPiBme.sln",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary;ForceNoAlign"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "publish",
+      "command": "dotnet publish ${workspaceFolder}/RaspPiBme.csproj -r linux-arm -o ${workspaceFolder}/RaspPiBme/bin/arm",
+      "type": "shell",
+      "problemMatcher": [],
+      "dependsOn": "build"
+    },
+    {
+      "label": "deploy",
+      "command": "scp",
+      "dependsOn": "publish",
+      "type": "shell",
+      "args": ["-r",
+              "${workspaceFolder}/RaspPiBme/bin/arm", 
+              "wszymanski@192.168.0.230:/home/wszymanski/RaspPiBme/"],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

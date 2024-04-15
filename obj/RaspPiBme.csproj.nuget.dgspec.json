@@ -1,0 +1,108 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/sammas/RaspPiBme/RaspPiBme.csproj": {}
+  },
+  "projects": {
+    "/Users/sammas/RaspPiBme/RaspPiBme.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/sammas/RaspPiBme/RaspPiBme.csproj",
+        "projectName": "RaspPiBme",
+        "projectPath": "/Users/sammas/RaspPiBme/RaspPiBme.csproj",
+        "packagesPath": "/Users/sammas/.nuget/packages/",
+        "outputPath": "/Users/sammas/RaspPiBme/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/sammas/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Iot.Device.Bindings": {
+              "target": "Package",
+              "version": "[3.1.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "NRedisStack": {
+              "target": "Package",
+              "version": "[0.12.0, )"
+            },
+            "NRedisTimeSeries": {
+              "target": "Package",
+              "version": "[1.4.0, )"
+            },
+            "Spectre.Console": {
+              "target": "Package",
+              "version": "[0.48.0, )"
+            },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.7.33, )"
+            },
+            "StackExchange.Redis.Extensions.AspNetCore": {
+              "target": "Package",
+              "version": "[10.2.0, )"
+            },
+            "StackExchange.Redis.Extensions.System.Text.Json": {
+              "target": "Package",
+              "version": "[10.2.0, )"
+            },
+            "entityFramework": {
+              "target": "Package",
+              "version": "[6.4.4, )"
+            },
+            "mqttnet": {
+              "target": "Package",
+              "version": "[4.3.3.952, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.100/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

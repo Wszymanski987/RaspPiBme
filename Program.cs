@@ -8,26 +8,33 @@ using MQTTnet;
 using System.Text;
 using MQTTnet.Client;
 using MQTTnet.Protocol;
+using System.Net;
 using StackExchange.Redis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NRedisTimeSeries;
 
+
+//redis
 IConfigurationRoot configuration;
 ServiceCollection serviceDescriptors = new ServiceCollection();
 
 ConfigureServices(serviceDescriptors);
 IServiceProvider serviceProvider = serviceDescriptors.BuildServiceProvider();
 
-//redis
-
 var redisOptions = new ConfigurationOptions
 {
-    EndPoints = configuration.GetSection("RedisOptions:EndPoints").Value,
-    Password = configuration.GetSection("RedisOptions:Password").Value,
+    EndPoints = { "redis-11448.c311.eu-central-1-1.ec2.cloud.redislabs.com:11448" },
+    Password = "FalHPHe0ItdVvgdG7iS9BwXqTa50Dvox",
     Ssl = false
 };
 
 ConnectionMultiplexer redisMultiplexer = ConnectionMultiplexer.Connect(redisOptions);
+
+if (redisMultiplexer.IsConnecting)
+    Console.WriteLine("Redis");
+
+
 IDatabase db = redisMultiplexer.GetDatabase();
 
 
@@ -36,9 +43,8 @@ var factory = new MqttFactory();
 var mqttClient = factory.CreateMqttClient();
 
 var options = new MqttClientOptionsBuilder()
-    .WithTcpServer(configuration.GetSection("MqttOptions:Broker").Value)
-    .WithTcpServer(configuration.GetSection("MqttOptions:Port").Value)
-    .WithClientId(configuration.GetSection("MqttOptions:clientId").Value)
+    .WithTcpServer("192.168.0.248")
+    .WithClientId("sensorBme280")
     .WithCleanSession()
     .Build();
 
@@ -48,8 +54,10 @@ if (connectResult.ResultCode == MqttClientConnectResultCode.Success)
 {
     Console.WriteLine("Connected to MQTT broker successfully.");
 
-    await mqttClient.SubscribeAsync(configuration.GetSection("MqttOptions:Topic").Value);
+    // Subscribe to a topic
+    await mqttClient.SubscribeAsync("cmnd/humidity/POWER");
 
+    // Callback function when a message is received
     mqttClient.ApplicationMessageReceivedAsync += e =>
     {
         Console.WriteLine($"Received message: {Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment)}");
@@ -57,9 +65,12 @@ if (connectResult.ResultCode == MqttClientConnectResultCode.Success)
     };
 }
 
+
+
 //sensor
 
 Thread.Sleep(1000);
+var Address = configuration.GetSection("I2COptions:Address").Value;
 var i2cSettings = new I2cConnectionSettings(1, 118);
 
 using I2cDevice i2cDevice = I2cDevice.Create(i2cSettings);
@@ -67,8 +78,10 @@ using var bme280 = new Bme280(i2cDevice);
 
 int measurementTime = bme280.GetMeasurementDuration();
 
+int executionTime = 300000;
+int timer = 0;
 
-while (true)
+while (timer < executionTime)
 {
     Console.Clear();
 
@@ -83,19 +96,24 @@ while (true)
     Console.WriteLine($"Pressure: {preValue.Hectopascals:#.##} hPa");
     Console.WriteLine($"Relative humidity: {humValue.Percent:#.##}%");
 
-    //await mqttClient.PublishAsync(messageTemp);
-}
+    db.TimeSeriesAdd("ts_m:t:temp", "*", tempValue.DegreesCelsius);
+    db.TimeSeriesAdd("ts_m:t:hum", "*", humValue.Percent);
+    db.TimeSeriesAdd("ts_m:t:pres", "*", preValue.Hectopascals);
 
-Thread.Sleep(1000);
+    Thread.Sleep(1000);
+    timer++;
+}
 
 
 void ConfigureServices(IServiceCollection serviceCollection)
 {
-    IConfigurationRoot configuration = new ConfigurationBuilder()
+    configuration = new ConfigurationBuilder()
         .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
         .AddJsonFile("appsettings.json")
         .Build();
 
     serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
     serviceCollection.AddTransient<ConfigureInitializationServices>();
+    //serviceCollection.AddTransient<DataServices>();
+
 }

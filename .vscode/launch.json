@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "preLaunchTask": "deploy",
+      "name": ".NET Core Launch (remote)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "/home/wszymanski/.dotnet/dotnet",
+      "args": ["/home/wszymanski/RaspPiBme/RaspPiBme.dll"],
+      "cwd": "/home/wszymanski/${workspaceFolderBasename}",
+      "stopAtEntry": false,
+      "console": "internalConsole",
+      "pipeTransport": {
+        "pipeCwd": "${workspaceFolder}",
+        "pipeProgram": "ssh",
+        "pipeArgs": ["wszymanski@192.168.0.230"],
+        "debuggerPath": "/home/wszymanski/vsdbg/vsdbg"
+      }
+    }
+  ]
+}
