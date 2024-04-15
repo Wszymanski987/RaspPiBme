@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
 using MQTTnet.Client;
+using RaspPiBme.Services;
 
 namespace RaspPiBme.Mqtt
 {
