@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace RaspPiBme.Services
 {
-    public class ServicesConfiguration
+    public class ServicesConfiguration : IServicesConfiguration
     {
         public IConfigurationRoot _configuration;
 
