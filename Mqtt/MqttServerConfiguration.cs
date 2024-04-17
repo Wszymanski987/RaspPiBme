@@ -9,8 +9,9 @@ namespace RaspPiBme.Mqtt
 {
     public class MqttServerConfiguration : IMqttServerConfiguration
     {
-        private MqttFactory _mqttFactory;
-        private ServicesConfiguration _servicesConfiguration;
+        private readonly MqttFactory _mqttFactory;
+        private readonly ServicesConfiguration _servicesConfiguration;
+        //private MqttClient _connectResult;
 
 
         public MqttServerConfiguration(ServicesConfiguration servicesConfiguration)
@@ -22,37 +23,42 @@ namespace RaspPiBme.Mqtt
         public async Task MqttClientCreation()
         {
             var mqttClient = _mqttFactory.CreateMqttClient();
+            var tcpServerValue = _servicesConfiguration._configuration.GetSection("MqttOptions:Broker").Value;
+            var clientIdValue = _servicesConfiguration._configuration.GetSection("MqttOptions:ClientId").Value;
 
-            var options = new MqttClientOptionsBuilder()
-                .WithTcpServer(_servicesConfiguration._configuration.GetSection("MqttOptions:Broker").Value)
-                .WithClientId(_servicesConfiguration._configuration.GetSection("MqttOptions:ClientId").Value) //to nir może być na sztywno
-                .WithCleanSession()
-                .Build();
-
-
-            var connectResult = await mqttClient.ConnectAsync(options);
-
-            if (connectResult.ResultCode == MqttClientConnectResultCode.Success)
+            if (tcpServerValue != null && clientIdValue != null)
             {
-                //TODO
-                //obsluga sybskrypcji 
-                Console.WriteLine("Connected to MQTT broker successfully.");
 
-                // Subscribe to a topic
-                await mqttClient.SubscribeAsync("cmnd/humidity/POWER");
+                var options = new MqttClientOptionsBuilder()
+                    .WithTcpServer(tcpServerValue)
+                    .WithClientId(clientIdValue) //to nir może być na sztywno
+                    .WithCleanSession()
+                    .Build();
 
-                // Callback function when a message is received
-                mqttClient.ApplicationMessageReceivedAsync += e =>
+                var connectResult = await mqttClient.ConnectAsync(options);
+
+                if (connectResult.ResultCode == MqttClientConnectResultCode.Success)
                 {
-                    Console.WriteLine($"Received message: {Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment)}");
-                    return Task.CompletedTask;
-                };
-            }
-            else
-            {
-                string errorMessage = $"Failed to connect to MQTT broker. Result code: {connectResult.ResultCode}";
+                    //TODO
+                    //obsluga sybskrypcji 
+                    Console.WriteLine("Connected to MQTT broker successfully.");
 
-                throw new Exception(errorMessage);
+                    // Subscribe to a topic
+                    await mqttClient.SubscribeAsync("cmnd/humidity/POWER");
+
+                    // Callback function when a message is received
+                    mqttClient.ApplicationMessageReceivedAsync += e =>
+                    {
+                        Console.WriteLine($"Received message: {Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment)}");
+                        return Task.CompletedTask;
+                    };
+                }
+                else
+                {
+                    string errorMessage = $"Failed to connect to MQTT broker. Result code: {connectResult.ResultCode}";
+
+                    throw new Exception(errorMessage);
+                }
             }
 
         }

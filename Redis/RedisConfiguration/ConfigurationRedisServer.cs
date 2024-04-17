@@ -14,6 +14,8 @@ namespace RaspPiBme.Redis.RedisConfiguration
         private IServiceProvider _serviceProvider;
         private ConnectionMultiplexer? _redisMultiplexer;
 
+        private ConfigurationOptions? _redisOptions;
+
 
         public ConfigurationRedisServer(ServicesConfiguration servicesConfiguration)
         {
@@ -24,20 +26,23 @@ namespace RaspPiBme.Redis.RedisConfiguration
 
         public void RedisConnectInitialization()
         {
-            var redisOptions = new ConfigurationOptions
+            var endPointValue = _servicesConfiguration._configuration.GetSection("RedisOption:EndPoints").Value;
+            var passwordValue = _servicesConfiguration._configuration.GetSection("RedisOption:Password").Value;
+
+            if (endPointValue != null && passwordValue != null)
             {
-                EndPoints = { _servicesConfiguration._configuration.GetSection("RedisOption:EndPoints").Value },
-                Password = _servicesConfiguration._configuration.GetSection("RedisOption:Password").Value,
-                Ssl = false
-            };
-            try
-            {
-                _redisMultiplexer = ConnectionMultiplexer.Connect(redisOptions);
+                _redisOptions = new ConfigurationOptions
+                {
+                    EndPoints = { endPointValue },
+                    Password = passwordValue,
+                    Ssl = false
+                };
+                _redisMultiplexer = ConnectionMultiplexer.Connect(_redisOptions);
                 Console.WriteLine("Connected to Redis server successfully.");
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine($"Error connecting to Redis server: {ex.Message}");
+                throw new Exception("Error: RedisOption:EndPoints or RedisOption:Password is null");
             }
 
         }
