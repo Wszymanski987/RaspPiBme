@@ -11,7 +11,6 @@ namespace RaspPiBme.Mqtt
         private readonly MqttFactory _mqttFactory;
         private IMqttClient? _mqttClient;
 
-        //ServicesConfiguration servicesConfiguration to było w konstruktorze
         public MqttServerConfiguration()
         {
             _mqttFactory = new MqttFactory();
@@ -20,14 +19,11 @@ namespace RaspPiBme.Mqtt
         public async Task MqttClientCreation()
         {
             _mqttClient = _mqttFactory.CreateMqttClient();
-            //var tcpServerValue = _servicesConfiguration._configuration.GetSection("MqttOptions:Broker").Value;
-            //var clientIdValue = _servicesConfiguration._configuration.GetSection("MqttOptions:ClientId").Value;
 
-            //if (tcpServerValue != null && clientIdValue != null)
             {
                 var options = new MqttClientOptionsBuilder()
                     .WithTcpServer("192.168.0.248")
-                    .WithClientId("sensorBme280") //to nie może być na sztywno
+                    .WithClientId("sensorBme280")
                     .WithCleanSession()
                     .Build();
 
@@ -36,18 +32,6 @@ namespace RaspPiBme.Mqtt
                 if (connectResult.ResultCode == MqttClientConnectResultCode.Success)
                 {
                     Console.WriteLine("Connected to MQTT broker successfully.");
-
-                    //TODO
-                    //obsluga sybskrypcji 
-                    // Subscribe to a topic
-                    await _mqttClient.SubscribeAsync("cmnd/humidity/POWER");
-
-                    // Callback function when a message is received
-                    _mqttClient.ApplicationMessageReceivedAsync += e =>
-                    {
-                        Console.WriteLine($"Received message: {Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment)}");
-                        return Task.CompletedTask;
-                    };
                 }
                 else
                 {
@@ -56,11 +40,6 @@ namespace RaspPiBme.Mqtt
                     throw new Exception(errorMessage);
                 }
             }
-            /*else
-            {
-                Console.WriteLine("Broker or client ID configuration value is null or empty.");
-            }*/
-
         }
     }
 }

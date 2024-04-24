@@ -31,16 +31,6 @@ await configurationMqttServer.MqttClientCreation();
 
 Console.WriteLine("mqtt");
 
-//Console.WriteLine($"db:  {db.Database}");
-
-
-//Sensor
-//var bme280Sensor = serviceProvider.GetService<SensorBme280Configuration>();
-//bme280Sensor.Initialize();
-//bme280Sensor.setTimeSeries(configureInitializationTimeSeries);
-
-//await bme280Sensor.StartMeasurements(5, configurationRedisServer._database);
-
 Thread.Sleep(1000);
 //var address = int.Parse(_servicesConfiguration._configuration.GetSection("I2COptions:Address").Value);
 var i2cSettings = new I2cConnectionSettings(1, 118);
@@ -76,32 +66,3 @@ while (timer < 1000)
 
     timer += 100;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-//redis
-ConfigurationRedisServer configurationRedisServer = new ConfigurationRedisServer(servicesConfiguration);
-configurationRedisServer.RedisConnectInitialization();
-ConfigureInitializationTimeSeries configureInitializationTimeSeries = new ConfigureInitializationTimeSeries(servicesConfiguration._configuration);
-
-
-// MQTT
-MqttServerConfiguration mqttServerConfiguration = new MqttServerConfiguration(servicesConfiguration);
-await mqttServerConfiguration.MqttClientCreation();
-
-
-//sensor
-SensorBme280Configuration bme280Sensor = new SensorBme280Configuration(servicesConfiguration, configureInitializationTimeSeries);
-//bme280Sensor.StartMeasurements(5, configurationRedisServer.);
-//Console.WriteLine("dupa");*/
-
