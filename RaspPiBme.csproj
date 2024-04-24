@@ -20,6 +20,9 @@
     <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
     <PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="10.2.0" />
     <PackageReference Include="StackExchange.Redis.Extensions.System.Text.Json" Version="10.2.0" />
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -13,16 +13,16 @@ namespace RaspPiBme.SensorBme280
 {
     public class SensorBme280Configuration : ISensorBme280Configuration
     {
-        private ServicesConfiguration _servicesConfiguration;
-        private int _measurementTime;
-        private Bme280 _bme280;
+        public ServicesConfiguration _servicesConfiguration;
+        public int _measurementTime;
+        public Bme280? _bme280;
         private ConfigureInitializationTimeSeries _configureInitializationTimeSeries;
 
-        public SensorBme280Configuration(ServicesConfiguration servicesConfiguration, ConfigureInitializationTimeSeries configureInitializationTimeSeries)
+        /*public SensorBme280Configuration(ConfigureInitializationTimeSeries configureInitializationTimeSeries)
         {
-            _servicesConfiguration = servicesConfiguration;
-            _configureInitializationTimeSeries = configureInitializationTimeSeries;
-        }
+            //_servicesConfiguration = servicesConfiguration;
+            //_configureInitializationTimeSeries = configureInitializationTimeSeries;
+        }*/
 
         public void Initialize()
         {
@@ -31,7 +31,7 @@ namespace RaspPiBme.SensorBme280
             _measurementTime = _bme280.GetMeasurementDuration();
         }
 
-        public void StartMeasurements(int executionTimeSeconds, IDatabase db)
+        public async Task StartMeasurements(int executionTimeSeconds, IDatabase db)
         {
             int executionTimeMillis = executionTimeSeconds * 1000;
             int timer = 0;
@@ -47,9 +47,9 @@ namespace RaspPiBme.SensorBme280
                 _bme280.TryReadPressure(out var preValue);
                 _bme280.TryReadHumidity(out var humValue);
 
-                db.TimeSeriesAdd("ts_m:t:temp", "*", tempValue.DegreesCelsius);
-                db.TimeSeriesAdd("ts_m:t:hum", "*", humValue.Percent);
-                db.TimeSeriesAdd("ts_m:t:pres", "*", preValue.Hectopascals);
+                await db.TimeSeriesAddAsync("ts_m:t:temp", "*", tempValue.DegreesCelsius);
+                await db.TimeSeriesAddAsync("ts_m:t:hum", "*", humValue.Percent);
+                await db.TimeSeriesAddAsync("ts_m:t:pres", "*", preValue.Hectopascals);
 
                 Thread.Sleep(1000);
 
@@ -61,11 +61,16 @@ namespace RaspPiBme.SensorBme280
         private void I2cConnectionCreate()
         {
             Thread.Sleep(1000);
-            var address = int.Parse(_servicesConfiguration._configuration.GetSection("I2COptions:Address").Value);
-            var i2cSettings = new I2cConnectionSettings(1, address);
+            //var address = int.Parse(_servicesConfiguration._configuration.GetSection("I2COptions:Address").Value);
+            var i2cSettings = new I2cConnectionSettings(1, 118);
 
             using I2cDevice i2cDevice = I2cDevice.Create(i2cSettings);
             _bme280 = new Bme280(i2cDevice);
+        }
+
+        public void setTimeSeries(ConfigureInitializationTimeSeries configureInitializationTimeSeries)
+        {
+            _configureInitializationTimeSeries = configureInitializationTimeSeries;
         }
 
     }

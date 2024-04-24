@@ -1,4 +1,5 @@
 /Users/sammas/RaspPiBme/RaspPiBme/bin/arm/RaspPiBme
+/Users/sammas/RaspPiBme/RaspPiBme/bin/arm/appsettings.json
 /Users/sammas/RaspPiBme/RaspPiBme/bin/arm/RaspPiBme.dll
 /Users/sammas/RaspPiBme/RaspPiBme/bin/arm/RaspPiBme.deps.json
 /Users/sammas/RaspPiBme/RaspPiBme/bin/arm/RaspPiBme.runtimeconfig.json

@@ -13,10 +13,10 @@ namespace RaspPiBme.Redis.ConfigureInitializationServices
     {
         private readonly IConfigurationRoot _config;
 
-        public ConfigureInitializationTimeSeries(IConfigurationRoot config)
-        {
-            _config = config;
-        }
+         public ConfigureInitializationTimeSeries(IConfigurationRoot config)
+         {
+             _config = config;
+         }
 
         public void DeleteKeys(IDatabase db)
         {

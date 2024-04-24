@@ -1,8 +1,7 @@
-using System;
 using System.Text;
-using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Formatter.V3;
 using RaspPiBme.Services;
 
 namespace RaspPiBme.Mqtt
@@ -10,44 +9,41 @@ namespace RaspPiBme.Mqtt
     public class MqttServerConfiguration : IMqttServerConfiguration
     {
         private readonly MqttFactory _mqttFactory;
-        private readonly ServicesConfiguration _servicesConfiguration;
-        //private MqttClient _connectResult;
+        private IMqttClient? _mqttClient;
 
-
-        public MqttServerConfiguration(ServicesConfiguration servicesConfiguration)
+        //ServicesConfiguration servicesConfiguration to było w konstruktorze
+        public MqttServerConfiguration()
         {
             _mqttFactory = new MqttFactory();
-            _servicesConfiguration = servicesConfiguration;
         }
 
         public async Task MqttClientCreation()
         {
-            var mqttClient = _mqttFactory.CreateMqttClient();
-            var tcpServerValue = _servicesConfiguration._configuration.GetSection("MqttOptions:Broker").Value;
-            var clientIdValue = _servicesConfiguration._configuration.GetSection("MqttOptions:ClientId").Value;
+            _mqttClient = _mqttFactory.CreateMqttClient();
+            //var tcpServerValue = _servicesConfiguration._configuration.GetSection("MqttOptions:Broker").Value;
+            //var clientIdValue = _servicesConfiguration._configuration.GetSection("MqttOptions:ClientId").Value;
 
-            if (tcpServerValue != null && clientIdValue != null)
+            //if (tcpServerValue != null && clientIdValue != null)
             {
-
                 var options = new MqttClientOptionsBuilder()
-                    .WithTcpServer(tcpServerValue)
-                    .WithClientId(clientIdValue) //to nir może być na sztywno
+                    .WithTcpServer("192.168.0.248")
+                    .WithClientId("sensorBme280") //to nie może być na sztywno
                     .WithCleanSession()
                     .Build();
 
-                var connectResult = await mqttClient.ConnectAsync(options);
+                var connectResult = await _mqttClient.ConnectAsync(options);
 
                 if (connectResult.ResultCode == MqttClientConnectResultCode.Success)
                 {
-                    //TODO
-                    //obsluga sybskrypcji 
                     Console.WriteLine("Connected to MQTT broker successfully.");
 
+                    //TODO
+                    //obsluga sybskrypcji 
                     // Subscribe to a topic
-                    await mqttClient.SubscribeAsync("cmnd/humidity/POWER");
+                    await _mqttClient.SubscribeAsync("cmnd/humidity/POWER");
 
                     // Callback function when a message is received
-                    mqttClient.ApplicationMessageReceivedAsync += e =>
+                    _mqttClient.ApplicationMessageReceivedAsync += e =>
                     {
                         Console.WriteLine($"Received message: {Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment)}");
                         return Task.CompletedTask;
@@ -60,6 +56,10 @@ namespace RaspPiBme.Mqtt
                     throw new Exception(errorMessage);
                 }
             }
+            /*else
+            {
+                Console.WriteLine("Broker or client ID configuration value is null or empty.");
+            }*/
 
         }
     }

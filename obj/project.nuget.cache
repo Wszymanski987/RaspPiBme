@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Wt4XDpi8WTE1+6nRIgQsotah5Xf6ixv53dkkorVBpeFVO/hKhSG+e9LKHfKEFguOeyNUx8Ncsgwg0ll3Azk/GA==",
+  "dgSpecHash": "UNddKD0hKObU7bTlvgSJky5lRYUJWcgnV8lSQKW1RlbkDb/UkceqUXNAb3S5h809yJFJKltnLEFaCXC6ZBKy6Q==",
   "success": true,
   "projectFilePath": "/Users/sammas/RaspPiBme/RaspPiBme.csproj",
   "expectedPackageFiles": [
@@ -76,8 +76,7 @@
     "/Users/sammas/.nuget/packages/system.text.json/8.0.1/system.text.json.8.0.1.nupkg.sha512",
     "/Users/sammas/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512",
     "/Users/sammas/.nuget/packages/system.windows.extensions/4.7.0/system.windows.extensions.4.7.0.nupkg.sha512",
-    "/Users/sammas/.nuget/packages/unitsnet/5.31.0/unitsnet.5.31.0.nupkg.sha512",
-    "/Users/sammas/.nuget/packages/microsoft.netcore.app.host.linux-arm/8.0.0/microsoft.netcore.app.host.linux-arm.8.0.0.nupkg.sha512"
+    "/Users/sammas/.nuget/packages/unitsnet/5.31.0/unitsnet.5.31.0.nupkg.sha512"
   ],
   "logs": []
 }

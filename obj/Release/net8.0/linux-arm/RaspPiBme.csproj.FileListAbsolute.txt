@@ -46,3 +46,4 @@
 /Users/sammas/RaspPiBme/bin/Release/net8.0/linux-arm/System.Security.Permissions.dll
 /Users/sammas/RaspPiBme/bin/Release/net8.0/linux-arm/System.Windows.Extensions.dll
 /Users/sammas/RaspPiBme/obj/Release/net8.0/linux-arm/RaspPiBme.sourcelink.json
+/Users/sammas/RaspPiBme/bin/Release/net8.0/linux-arm/appsettings.json
