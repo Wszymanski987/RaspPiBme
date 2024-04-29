@@ -8,6 +8,7 @@ using RaspPiBme.Redis.ConfigureInitializationServices;
 using StackExchange.Redis;
 using NRedisTimeSeries;
 using RaspPiBme.Services;
+using static System.Console;
 
 namespace RaspPiBme.SensorBme280
 {
@@ -16,71 +17,70 @@ namespace RaspPiBme.SensorBme280
         public ServicesConfiguration ServicesConfiguration { get; set; }
         public int MeasurementTime { get; set; }
         public Bme280 Bme280 { get; set; }
-        private ConfigureInitializationTimeSeries _configureInitializationTimeSeries;
-
-        /*public SensorBme280Configuration(ConfigureInitializationTimeSeries configureInitializationTimeSeries)
-        {
-            //_servicesConfiguration = servicesConfiguration;
-            //_configureInitializationTimeSeries = configureInitializationTimeSeries;
-        }*/
 
         public void Initialize()
         {
-            I2cConnectionCreate();
+            try
+            {
+                I2cConnectionCreate();
 
-            MeasurementTime = Bme280.GetMeasurementDuration();
+                MeasurementTime = Bme280.GetMeasurementDuration();
+
+            }
+            catch (Exception ex)
+            {
+                WriteLine($"Initialization error occurred: {ex.Message}");
+            }
         }
 
-        public void StartMeasurements(int executionTimeSeconds, IDatabase db)
+        public async Task StartMeasurements(int measurementNumber, IDatabase db)
         {
-            int executionTimeMillis = executionTimeSeconds * 1000;
-            int timer = 0;
+            Thread.Sleep(1000);
 
-            Console.WriteLine("Start Measurement");
+            var cnt = 0;
 
-            while (timer < 1000)
+            //wait db.StringSetAsync("measurement_complited", "false");
+
+            while (cnt < measurementNumber)
             {
-                Console.Clear();
+                Clear();
 
                 Bme280.SetPowerMode(Bmx280PowerMode.Forced);
-                //Thread.Sleep(MeasurementTime);
-                Thread.Sleep(Bme280.GetMeasurementDuration());
+                await Task.Delay(MeasurementTime);
 
                 Bme280.TryReadTemperature(out var tempValue);
                 Bme280.TryReadPressure(out var preValue);
                 Bme280.TryReadHumidity(out var humValue);
 
-                db.TimeSeriesAdd("ts_m:t:temp", "*", tempValue.DegreesCelsius);
-                db.TimeSeriesAdd("ts_m:t:hum", "*", humValue.Percent);
-                db.TimeSeriesAdd("ts_m:t:pres", "*", preValue.Hectopascals);
+                await db.TimeSeriesAddAsync("ts_m:t:temp", "*", tempValue.DegreesCelsius);
+                await db.TimeSeriesAddAsync("ts_m:t:hum", "*", humValue.Percent);
+                await db.TimeSeriesAddAsync("ts_m:t:pres", "*", preValue.Hectopascals);
 
-                Thread.Sleep(1000);
+                await Task.Delay(1000);
 
-                timer += 100;
+                cnt++;
             }
+
+            //await db.StringSetAsync("measurement_complited", "true");
         }
 
-
-        private void I2cConnectionCreate() //to nie działa, bo using obowiązuje tylko do końca bloku?
+        private void I2cConnectionCreate()
         {
             Thread.Sleep(1000);
             //var address = int.Parse(_servicesConfiguration._configuration.GetSection("I2COptions:Address").Value);
-            var i2cSettings = new I2cConnectionSettings(1, 118);
 
-            using I2cDevice i2cDevice = I2cDevice.Create(i2cSettings);
-            Bme280 = new Bme280(i2cDevice);
+            try
+            {
+                var i2cSettings = new I2cConnectionSettings(1, 118);
+
+                I2cDevice i2cDevice = I2cDevice.Create(i2cSettings);
+                Bme280 = new Bme280(i2cDevice);
+            }
+            catch (Exception ex)
+            {
+                WriteLine($"I2C error occurred: {ex.Message}");
+            }
         }
-
-        public void setTimeSeries(ConfigureInitializationTimeSeries configureInitializationTimeSeries)
-        {
-            _configureInitializationTimeSeries = configureInitializationTimeSeries;
-        }
-
-        public void Show()
-        {
-            Console.WriteLine("utworzono");
-        }
-
     }
 }
 
