@@ -7,7 +7,7 @@ namespace RaspPiBme.SensorBme280
     {
         public void Initialize();
 
-        public Task StartMeasurements(int executionTimeSeconds, IDatabase db);
+        public void StartMeasurements(int executionTimeSeconds, IDatabase db);
     }
 }
 

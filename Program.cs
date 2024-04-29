@@ -1,15 +1,11 @@
 ﻿using System.Device.I2c;
 using Iot.Device.Bmxx80;
-using Iot.Device.Bmxx80.PowerMode;
 using Microsoft.Extensions.DependencyInjection;
-using NRedisStack;
-using NRedisTimeSeries;
 using RaspPiBme.Mqtt;
 using RaspPiBme.Redis.ConfigureInitializationServices;
 using RaspPiBme.Redis.RedisConfiguration;
 using RaspPiBme.SensorBme280;
 using RaspPiBme.Services;
-using StackExchange.Redis;
 
 ServiceCollection serviceDescriptors = new ServiceCollection();
 
@@ -32,37 +28,18 @@ await configurationMqttServer.MqttClientCreation();
 Console.WriteLine("mqtt");
 
 Thread.Sleep(1000);
-//var address = int.Parse(_servicesConfiguration._configuration.GetSection("I2COptions:Address").Value);
+
 var i2cSettings = new I2cConnectionSettings(1, 118);
 
 Thread.Sleep(1000);
+
 using I2cDevice i2cDevice = I2cDevice.Create(i2cSettings);
-var bme280 = new Bme280(i2cDevice);
 
+var sensorBme280Configuration = serviceProvider.GetService<SensorBme280Configuration>();
 
-var executionTimeSeconds = 5;
+sensorBme280Configuration.Bme280 = new Bme280(i2cDevice);
+int executionTimeSeconds = 5;
 
-int executionTimeMillis = executionTimeSeconds * 1000;
-int timer = 0;
+sensorBme280Configuration.StartMeasurements(executionTimeSeconds, configurationRedisServer._database);
 
-while (timer < 1000)
-{
-    Console.Clear();
-
-    bme280.SetPowerMode(Bmx280PowerMode.Forced);
-    Thread.Sleep(bme280.GetMeasurementDuration());
-
-    bme280.TryReadTemperature(out var tempValue);
-    bme280.TryReadPressure(out var preValue);
-    bme280.TryReadHumidity(out var humValue);
-
-    Console.WriteLine($"{tempValue.DegreesCelsius}");
-
-    configurationRedisServer._database.TimeSeriesAdd("ts_m:t:temp", "*", tempValue.DegreesCelsius);
-    configurationRedisServer._database.TimeSeriesAdd("ts_m:t:hum", "*", humValue.Percent);
-    configurationRedisServer._database.TimeSeriesAdd("ts_m:t:pres", "*", preValue.Hectopascals);
-
-    Thread.Sleep(1000);
-
-    timer += 100;
-}
+await configurationRedisServer._database.StringSetAsync("measurement_complited", "true");

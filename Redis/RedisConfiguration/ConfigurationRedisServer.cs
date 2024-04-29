@@ -41,16 +41,6 @@ namespace RaspPiBme.Redis.RedisConfiguration
                         Console.WriteLine("Connected to Redis server successfully.");
 
                     _database = _redisMultiplexer.GetDatabase();
-
-                    /*var bme280Sensor = new SensorBme280Configuration
-                    {
-                        _servicesConfiguration = _servicesConfiguration
-                    };
-                    bme280Sensor.StartMeasurements(5, _database);*/
-
-                    //_configureInitializationTimeSeries = new ConfigureInitializationTimeSeries();
-                    //_configureInitializationTimeSeries.InitializeTimeSeries(database);
-
                 }
                 catch (Exception ex)
                 {
@@ -63,10 +53,10 @@ namespace RaspPiBme.Redis.RedisConfiguration
             }
         }
 
-        /*public void Dispose()
+        public void Dispose()
         {
             _redisMultiplexer?.Dispose();
-        }*/
+        }
 
         public void showDatabase()
         {
