@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RaspPiBme")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+763f84ec44d1157a4096a8fa36d6c0af32e40a3e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f52adc755d8f24d2680d9152fa2452022cc93893")]
 [assembly: System.Reflection.AssemblyProductAttribute("RaspPiBme")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RaspPiBme")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

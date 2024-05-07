@@ -1,7 +1,7 @@
 using System;
 using StackExchange.Redis;
 
-namespace RaspPiBme.SensorBme280
+namespace RaspPiBme.SensorBme280.Configuration
 {
     public interface ISensorBme280Configuration
     {

@@ -1,9 +1,9 @@
 using System;
 using StackExchange.Redis;
 
-namespace RaspPiBme.redis.ConfigureInitializationServices
+namespace RaspPiBme.Redis.TimeSeries.Configuration
 {
-    public interface IConfigureInitializationServices
+    public interface ITimeSeriesConfiguration
     {
         public void DeleteKeys(IDatabase db);
 
